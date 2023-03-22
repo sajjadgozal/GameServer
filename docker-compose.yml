@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "9988:9988"
+    volumes:
+      - .:/usr/src/app
+    command: go run main.go -b 0.0.0.0
