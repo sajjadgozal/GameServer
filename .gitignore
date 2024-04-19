@@ -1,0 +1,7 @@
+
+# Ignore specific folders
+pg_data/
+pg_data_test/
+
+# Ignore specific files
+.env

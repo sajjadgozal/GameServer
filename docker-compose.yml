@@ -1,0 +1,74 @@
+version: '3.1'
+
+services:
+
+  app:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: golang_container
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_HOST=${DB_HOST}
+      - DATABASE_PORT=${DB_PORT}
+      - TEST_POSTGRES_USER=${TEST_DB_USER}
+      - TEST_POSTGRES_PASSWORD=${TEST_DB_PASSWORD}
+      - TEST_POSTGRES_DB=${TEST_DB_NAME}
+      - TEST_DATABASE_HOST=${TEST_DB_HOST}
+      - TEST_DATABASE_PORT=${TEST_DB_PORT}
+    tty: true
+    ports:
+      - "3000:3000"
+    restart: always
+    volumes:
+      - ./api:/app
+    depends_on:
+      - postgres
+    networks:
+      - main_network
+
+  postgres:
+    image: postgres
+    restart: always
+    container_name: postgres_container
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_HOST=${DB_HOST}
+    ports:
+      - '${DB_PORT}:5432'
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+    networks:
+            - main_network
+
+  postgresdb_test:
+    image: postgres:latest
+    container_name: postgres_test_container
+    environment:
+      - POSTGRES_USER=${TEST_DB_USER}
+      - POSTGRES_PASSWORD=${TEST_DB_PASSWORD}
+      - POSTGRES_DB=${TEST_DB_NAME}
+      - DATABASE_HOST=${TEST_DB_HOST}
+    ports:
+      - '${TEST_DB_PORT}:5432'
+    volumes:
+      - ./pg_data_test:/var/lib/postgresql/data
+    networks:
+      - main_network
+
+
+# Networks to be created to facilitate communication between containers
+networks:
+  main_network:
+    driver: bridge
+
+# Volumes
+volumes:
+    pg_data:
+        driver: local
+    pg_data_test:
+        driver: local
