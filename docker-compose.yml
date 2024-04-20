@@ -2,11 +2,11 @@ version: '3.1'
 
 services:
 
-  app:
+  server:
     build:
-      context: ./api
+      context: ./server
       dockerfile: Dockerfile
-    container_name: golang_container
+    container_name: server_container
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -23,7 +23,7 @@ services:
       - "3000:3000"
     restart: always
     volumes:
-      - ./api:/app
+      - ./server:/server
     depends_on:
       - postgres
     networks:
